@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Prediction Form</title>
+</head>
+<body>
+    <form id="prediction-form">
+        <div>색상</div>
+        <select name="cap_color" id="cap_color">
+            <option value="b">담황색</option>
+            <option value="e">붉은색</option>
+            <option value="g">회색</option>
+            <option value="h">초콜릿색</option>
+            <option value="k">검정색</option>
+            <option value="n">갈색</option>
+            <option value="o">오렌지색</option>
+            <option value="p">분홍색</option>
+            <option value="r">초록색</option>
+            <option value="u">보라색</option>
+            <option value="w">백색</option>
+            <option value="y">노란색</option>
+        </select>
+        <div>향</div>
+        <select name="odor" id="odor">
+            <option value="a">아몬드향</option>
+            <option value="c">나무향</option>
+            <option value="f">악취</option>
+            <option value="i">팔각향</option>
+            <option value="m">곰팡이향</option>
+            <option value="n">무취</option>
+            <option value="p">톡쏘는향</option>
+            <option value="s">매운향</option>
+            <option value="y">비린향</option>
+        </select>
+        <div>서식지</div>
+        <select name="habitat" id="habitat">
+            <option value="d">숲</option>
+            <option value="g">풀</option>
+            <option value="l">나뭇잎</option>
+            <option value="m">초원</option>
+            <option value="p">길</option>
+            <option value="u">도시</option>
+            <option value="w">쓰레기</option>
+        </select>
+        <button type="button" onclick="predict()">독버섯인지 예측하기</button>
+    </form>
+
+    <div id="result">
+        <!-- 결과가 여기 표시됩니다 -->
+    </div>
+
+    <script>
+        function predict() {
+            // 폼 데이터 가져오기
+            var cap_color = document.getElementById("cap_color").value;
+            var odor = document.getElementById("odor").value;
+            var habitat = document.getElementById("habitat").value;
+
+            // JSON 데이터 생성
+            var data = {
+                "cap_color": cap_color,
+                "odor": odor,
+                "habitat": habitat
+            };
+
+            // API 호출
+            fetch('/predict/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // 결과 표시                
+                if(data["prediction"] === "p")
+                {
+                    document.getElementById("result").innerHTML = `<h2>예측 값은?</h2><p>  <img src = "../static/assets/poison.png" width = 300px height = 300px>  </p> <h2> 독버섯입니다.<h2>`;
+                }
+                else
+                {
+                    document.getElementById("result").innerHTML = `<h2>예측 값은?</h2><p>  <img src = "../static/assets/eat.png" width = 300px height = 300px> <h2> 식용버섯입니다.<h2> </p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
